@@ -97,3 +97,10 @@ If you are interested in writing code to fix issues, please see [How to Contribu
 ## Thank You
 
 Your contributions to open source, large or small, make great projects like this possible. Thank you for taking the time to contribute.
+
+
+## 新增内容
+
+- [ ] 功能A
+- [ ] 功能B
+- [ ] 功能C
