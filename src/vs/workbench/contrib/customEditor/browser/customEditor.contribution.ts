@@ -1,3 +1,4 @@
+typescript
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,8 +16,10 @@ import { WebviewEditor } from '../../webviewPanel/browser/webviewEditor.js';
 import { CustomEditorInput } from './customEditorInput.js';
 import { CustomEditorService } from './customEditors.js';
 
+// Register the CustomEditorService as a singleton with delayed instantiation
 registerSingleton(ICustomEditorService, CustomEditorService, InstantiationType.Delayed);
 
+// Register the WebviewEditor as an editor pane with the CustomEditorInput descriptor
 Registry.as<IEditorPaneRegistry>(EditorExtensions.EditorPane)
 	.registerEditorPane(
 		EditorPaneDescriptor.create(
@@ -27,7 +30,10 @@ Registry.as<IEditorPaneRegistry>(EditorExtensions.EditorPane)
 		new SyncDescriptor(CustomEditorInput)
 	]);
 
+// Register the CustomEditorInputSerializer with the editor factory registry
 Registry.as<IEditorFactoryRegistry>(EditorExtensions.EditorFactory)
 	.registerEditorSerializer(CustomEditorInputSerializer.ID, CustomEditorInputSerializer);
 
+// Register the ComplexCustomWorkingCopyEditorHandler as a workbench contribution
+// with the BlockStartup phase to ensure it runs during the startup phase
 registerWorkbenchContribution2(ComplexCustomWorkingCopyEditorHandler.ID, ComplexCustomWorkingCopyEditorHandler, WorkbenchPhase.BlockStartup);
