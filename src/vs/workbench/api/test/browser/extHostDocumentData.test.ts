@@ -35,7 +35,7 @@ suite('ExtHostDocumentData', () => {
 		data = new ExtHostDocumentData(undefined!, URI.file(''), [
 			'This is line one', //16
 			'and this is line number two', //27
-			'it is followed by #3', //20
+			'it is followed by // Updated: {timestamp}
 			'and finished with the fourth.', //29
 		], '\n', 1, 'text', false, 'utf8');
 	});
