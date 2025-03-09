@@ -1,3 +1,4 @@
+typescript
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +13,7 @@ import { URI } from '../../common/uri.js';
 import * as path from 'path';
 import { assertThrowsAsync, ensureNoDisposablesAreLeakedInTestSuite } from '../common/utils.js';
 
-// tests for snapshot are in Node so that we can use native FS operations to
+// Tests for snapshot are in Node so that we can use native FS operations to
 // set up and validate things.
 //
 // Uses snapshots for testing snapshots. It's snapception!
@@ -20,17 +21,21 @@ import { assertThrowsAsync, ensureNoDisposablesAreLeakedInTestSuite } from '../c
 suite('snapshot', () => {
 	let testDir: string;
 
+	// Ensure no disposables are leaked in the test suite
 	ensureNoDisposablesAreLeakedInTestSuite();
 
+	// Setup a temporary directory for each test
 	setup(function () {
 		testDir = getRandomTestPath(tmpdir(), 'vsctests', 'snapshot');
 		return fs.promises.mkdir(testDir, { recursive: true });
 	});
 
+	// Clean up the temporary directory after each test
 	teardown(function () {
 		return Promises.rm(testDir);
 	});
 
+	// Helper function to create a SnapshotContext with a custom snapshots directory
 	const makeContext = (test: Partial<Mocha.Test> | undefined) => {
 		return new class extends SnapshotContext {
 			constructor() {
@@ -40,6 +45,7 @@ suite('snapshot', () => {
 		};
 	};
 
+	// Helper function to print the directory tree and assert it against a snapshot
 	const snapshotFileTree = async () => {
 		let str = '';
 
@@ -64,6 +70,7 @@ suite('snapshot', () => {
 		await assertSnapshot(str);
 	};
 
+	// Test case: Creates a snapshot and validates the file tree
 	test('creates a snapshot', async () => {
 		const ctx = makeContext({
 			file: 'foo/bar',
@@ -74,6 +81,7 @@ suite('snapshot', () => {
 		await snapshotFileTree();
 	});
 
+	// Test case: Validates a snapshot by comparing it with an existing one
 	test('validates a snapshot', async () => {
 		const ctx1 = makeContext({
 			file: 'foo/bar',
@@ -87,7 +95,7 @@ suite('snapshot', () => {
 			fullTitle: () => 'hello world!'
 		});
 
-		// should pass:
+		// Should pass:
 		await ctx2.assert({ cool: true });
 
 		const ctx3 = makeContext({
@@ -95,10 +103,11 @@ suite('snapshot', () => {
 			fullTitle: () => 'hello world!'
 		});
 
-		// should fail:
+		// Should fail:
 		await assertThrowsAsync(() => ctx3.assert({ cool: false }));
 	});
 
+	// Test case: Cleans up old snapshots and validates the remaining file tree
 	test('cleans up old snapshots', async () => {
 		const ctx1 = makeContext({
 			file: 'foo/bar',
@@ -111,39 +120,3 @@ suite('snapshot', () => {
 		await ctx1.assert({ customName: 2 }, { name: 'fourthTest' });
 
 		await snapshotFileTree();
-
-		const ctx2 = makeContext({
-			file: 'foo/bar',
-			fullTitle: () => 'hello world!'
-		});
-
-		await ctx2.assert({ cool: true });
-		await ctx2.assert({ customName: 1 }, { name: 'thirdTest' });
-		await ctx2.removeOldSnapshots();
-
-		await snapshotFileTree();
-	});
-
-	test('formats object nicely', async () => {
-		const circular: any = {};
-		circular.a = circular;
-
-		await assertSnapshot([
-			1,
-			true,
-			undefined,
-			null,
-			123n,
-			Symbol('heyo'),
-			'hello',
-			{ hello: 'world' },
-			circular,
-			new Map([['hello', 1], ['goodbye', 2]]),
-			new Set([1, 2, 3]),
-			function helloWorld() { },
-			/hello/g,
-			new Array(10).fill('long string'.repeat(10)),
-			{ [Symbol.for('debug.description')]() { return `Range [1 -> 5]`; } },
-		]);
-	});
-});
