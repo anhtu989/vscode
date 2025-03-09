@@ -1,3 +1,12 @@
+/**
+ * @fileoverview 模块说明
+ * @author AI Generator
+ */
+
+'use strict';
+
+import { Config } from './types';
+
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
